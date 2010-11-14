@@ -29,7 +29,7 @@ h2. Rational
 
 The Rails < 2.3 engines plugin defined the term "engine" as a "full vertical application slice". When Rails 2.3 included engines it went a few steps back and only implemented most of the core features, making an "engine" rather a "pimped plugin". Today in Rails 3 we have engines that are *way* more powerful and flexible than what we had before - in short they're just "done right" now.
 
-If you want to use Rails 3 engines to build full application slices there still is a single, crucial feature missing: the ability to mix first-class-citizen code slices from various engines automatically without having one engine know too much about other engines.
+But if you want to use Rails 3 engines to build full application slices there still is a single, crucial feature missing: the ability to mix first-class-citizen code slices from various engines automatically without having one engine know too much about other engines.
 
 For example:
 
@@ -48,6 +48,8 @@ User.has_many :tickets
 </pre>
 
 Ideally we want these code bits to be placed in the app/models directories because that's the place where people look for model code. And we want these bits to be lazy loaded whenever the application loads the User model.
+
+ActiveSupport::Slices provides a simplistic solution to all of these requirements.
 
 Also see "this discussion":https://gist.github.com/b7733d5fea89d2dd37ca
 
