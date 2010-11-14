@@ -1,0 +1,54 @@
+h1. Vertical code slices based on ActiveSupport Dependencies
+
+ActiveSupport::Slices allows to lazily autoload "slices" (or extensions) of Ruby files.
+
+E.g. whenever the application requires the file @foo/bar/user.rb@ through ActiveSupport::Dependencies then it will load all files @foo/bar/user_slice.rb@ that are placed anywhere in the @autoload_paths@.
+
+h2. Installation
+
+To hook up ActiveSupport::Slices just include the gem and @require 'active_support/slices'@.
+
+h2. Usage
+
+Given the following files:
+
+<pre>
+engine-1/app/models/user_slice.rb
+engine-2/app/models/user.rb
+engine-3/app/models/user_slice.rb
+</pre>
+
+If the application requires "user.rb" either through
+
+1. using the (not yet defined) @User@ constant directly or
+2. using @require_dependency 'user'@
+
+... then ActiveSupport::Dependencies will load @engine-2/app/models/user.rb@ first and ActiveSupport::Slices will load both @engine-1/app/models/user_slice.rb@ and @engine-2/app/models/user_slice.rb@ second.
+
+h2. Rational
+
+The Rails < 2.3 engines plugin defined the term "engine" as a "full vertical application slice". When Rails 2.3 included engines it went a few steps back and only implemented most of the core features, making an "engine" rather a "pimped plugin". Today in Rails 3 we have engines that are *way* more powerful and flexible than what we had before - in short they're just "done right" now.
+
+If you want to use Rails 3 engines to build full application slices there still is a single, crucial feature missing: the ability to mix first-class-citizen code slices from various engines automatically without having one engine know too much about other engines.
+
+For example:
+
+Let's say we have a bunch of engines that contribute small applications (say, a blog and a ticket tracker) and only share a few things, maybe a User model.  So, we'd have engines like: user, blog, tickets. Obviously users have many blog posts and many tickets.
+
+Now, when the blog engine is installed the User.should have_many(:posts). When the tickets engine is installed the User.should have_many(:tickets). But obviously this needs to be defined in the blog and tickets engines, not in the user engine where the User class is defined.
+
+So, the blog and tickets engines somehow need to reopen the User class and add that association:
+
+<pre>
+# somewhere in the blog engine
+User.has_many :posts
+
+# somewhere in the tickets engine
+User.has_many :tickets
+</pre>
+
+Ideally we want these code bits to be placed in the app/models directories because that's the place where people look for model code. And we want these bits to be lazy loaded whenever the application loads the User model.
+
+Also see "this discussion":https://gist.github.com/b7733d5fea89d2dd37ca
+
+
