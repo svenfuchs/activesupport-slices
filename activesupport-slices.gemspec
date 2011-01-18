@@ -1,5 +1,5 @@
 $:.unshift File.expand_path('../lib', __FILE__)
-require 'active_support/slices/version'
+require 'activesupport_slices/version'
 
 Gem::Specification.new do |s|
   s.name         = "activesupport-slices"
