@@ -19,7 +19,7 @@ module ActiveSupport
     end
 
     def register
-      Dir["{#{paths.join(',')}}/**/*_slice*.rb"].each do |path|
+      Dir["{#{paths.join(',')}}/**/*_slice*.rb"].sort.each do |path|
         filename = local(path).sub('_slice', '')
         slices[filename] ||= []
         slices[filename] << path
