@@ -54,3 +54,10 @@ ActiveSupport::Slices provides a simplistic solution to all of these requirement
 Also see "this discussion":https://gist.github.com/b7733d5fea89d2dd37ca
 
 
+h2. Gotchas
+
+If your slices won't get loaded, make sure they are locatable within your loadpath. If e.g. you want to slice "minimal":https://github.com/svenfuchs/minimal template, you must edit your @config/application.rb@ as follows:
+
+<pre>
+config.autoload_paths += %W(#{config.root}/app/views)
+</pre>
